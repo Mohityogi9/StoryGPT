@@ -58,13 +58,14 @@ Dataset split:
 2. Character-level tokenization
 3. Token embeddings
 4. Positional embeddings
-5. Multi-head causal self-attention
-6. Feed-forward neural network
-7. Residual connections and layer normalization
-8. Four stacked Transformer blocks
-9. Final layer normalization
-10. Language model output layer
-11. Next-character prediction
+5. Four stacked Transformer blocks, each containing:
+   - Multi-head causal self-attention
+   - Residual connection and layer normalization
+   - Feed-forward neural network
+   - Residual connection and layer normalization
+6. Final layer normalization
+7. Language model output layer
+8. Next-character prediction
 
 ## Training Results
 
@@ -122,14 +123,11 @@ StoryGPT/
 │
 ├── StoryGPT.ipynb
 ├── storygpt_checkpoint.pth
+├── generated_story.txt
+├── training_loss.png
 ├── README.md
-├── requirements.txt
-│
-└── screenshots/
-    ├── training_loss.png
-    └── generated_story.png
+└── requirements.txt
 ```
-
 ## Limitations
 
 - Character-level rather than word-level or subword tokenization.

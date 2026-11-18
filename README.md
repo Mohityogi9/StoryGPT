@@ -1,97 +1,204 @@
 # StoryGPT – AI Story Generator
 
-StoryGPT is a character-level language model built using a decoder-only Transformer architecture. It learns patterns from simple English stories in the TinyStories dataset and generates new story-like text one character at a time.
+StoryGPT is a character-level, decoder-only Transformer language model built from scratch using PyTorch. It is trained on a subset of the TinyStories dataset to learn patterns in short stories and generate new story-like text from a given prompt.
 
-The model is implemented and trained completely from scratch using PyTorch, without pretrained model weights or external AI APIs.
+The main objective of this project is to understand the internal working of GPT-style language models, including tokenization, embeddings, causal self-attention, Transformer blocks, model training, checkpoint saving and loading, and text generation.
 
-## Project Overview
+> **Note:** This is an educational project. The generated stories may contain grammatical errors, repetition, incomplete sentences, or unrelated ideas.
 
-The objective of this project is to understand and implement the fundamental concepts behind GPT-style language models, including tokenization, embeddings, self-attention, Transformer blocks, model training, evaluation and text generation.
+## Features
 
-## Key Features
-
-- Custom character-level tokenizer
-- Randomly initialized neural network parameters
-- Decoder-only Transformer architecture
-- Multi-head causal self-attention
-- Positional embeddings
-- Feed-forward neural networks
-- Residual connections and layer normalization
-- Model training using AdamW optimizer
-- Training and validation loss evaluation
-- Temperature-based text generation
-- Model checkpoint saving and loading
+- Loads a subset of the TinyStories dataset.
+- Implements character-level tokenization.
+- Builds a GPT-style language model from scratch using PyTorch.
+- Uses token embeddings and positional embeddings.
+- Implements masked (causal) self-attention.
+- Uses multi-head attention with 4 attention heads.
+- Implements feed-forward neural networks.
+- Uses residual connections and layer normalization.
+- Trains the model using the AdamW optimizer.
+- Evaluates training and validation loss.
+- Generates text using temperature-based sampling.
+- Saves the trained model in a checkpoint file.
+- Supports loading a previously trained model without retraining.
 
 ## Dataset
 
-**Dataset:** TinyStories
+The project uses the **TinyStories dataset** from Hugging Face.
 
-The model is trained on a subset of TinyStories, a dataset containing short stories written in simple English. It is designed to help language models learn basic language patterns and story structures.
+Dataset: https://huggingface.co/datasets/roneneldan/TinyStories
 
-Dataset source:  
-https://huggingface.co/datasets/roneneldan/TinyStories
+The following subset was used:
 
-Dataset split:
-- Training data: 20,000 stories
-- Validation data: 2,000 stories
-- Total: 22,000 stories
+| Dataset Split | Number of Stories |
+|---|---:|
+| Training | 20,000 |
+| Validation | 2,000 |
+| **Total** | **22,000** |
 
-The selected stories are combined into text sequences and processed using character-level tokenization.
+The stories are converted into a continuous text sequence, and the model learns to predict the next character.
 
 ## Model Architecture
 
-| Parameter | Configuration |
+StoryGPT uses a decoder-only Transformer architecture.
+
+### Model Configuration
+
+| Parameter | Value |
 |---|---:|
-| Model type | Decoder-only Transformer |
 | Tokenization | Character-level |
-| Vocabulary size | 98 |
-| Embedding dimension | 128 |
-| Attention heads | 4 |
-| Transformer blocks | 4 |
-| Context length | 128 |
-| Batch size | 32 |
+| Vocabulary Size | 98 |
+| Batch Size | 32 |
+| Context Length | 128 |
+| Embedding Dimension | 128 |
+| Attention Heads | 4 |
+| Transformer Layers | 4 |
+| Feed-Forward Hidden Dimension | 512 |
 | Dropout | 0.1 |
-| Trainable parameters | 767,330 |
+| Training Iterations | 3,000 |
+| Learning Rate | 0.0003 |
 | Optimizer | AdamW |
-| Learning rate | 0.0003 |
-| Training iterations | 3,000 |
+| Total Parameters | 767,330 |
 
-## Model Architecture Flow
+### Architecture Workflow
 
-1. Input text
-2. Character-level tokenization
-3. Token embeddings
-4. Positional embeddings
-5. Four stacked Transformer blocks, each containing:
-   - Multi-head causal self-attention
-   - Residual connection and layer normalization
-   - Feed-forward neural network
-   - Residual connection and layer normalization
-6. Final layer normalization
-7. Language model output layer
-8. Next-character prediction
+1. **Input Text:** The model receives a sequence of characters.
+2. **Character Tokenization:** Each character is converted into a numerical token.
+3. **Token Embeddings:** Numerical tokens are converted into dense vector representations.
+4. **Positional Embeddings:** Position information is added to token embeddings.
+5. **Transformer Blocks:** The model processes the sequence through 4 Transformer blocks.
+   - Masked Multi-Head Self-Attention
+   - Residual Connections
+   - Layer Normalization
+   - Feed-Forward Neural Network
+6. **Output Layer:** A linear layer predicts scores for the next character.
+7. **Text Generation:** The model generates one character at a time using autoregressive sampling.
 
-## Training Results
+## Training and Evaluation
 
-Final recorded evaluation:
+The model was trained for 3,000 iterations using an NVIDIA T4 GPU through Google Colab.
+
+### Final Training Results
 
 | Metric | Result |
 |---|---:|
-| Final training loss | 1.1331 |
-| Final validation loss | 1.1413 |
-| Training iterations | 3,000 |
-| Training time | Approximately 83.4 seconds |
-| Training hardware | NVIDIA T4 GPU |
+| Training Iterations | 3,000 |
+| Training Loss | 1.1314 |
+| Validation Loss | 1.1341 |
+| GPU | NVIDIA T4 |
+| Training Time (last 2,900 iterations) | Approximately 83.4 seconds |
 
-The decreasing training and validation losses indicate that the model learned character and language patterns from the TinyStories dataset. The small difference between the two losses suggests similar performance on the training and validation data.
+The training and validation losses are close in this run, indicating similar loss values on the two dataset splits.
 
 ## Text Generation
 
-StoryGPT generates text by predicting one character at a time based on the preceding characters.
+StoryGPT generates story-like text based on user-provided prompts.
 
-It supports:
-- User-provided text prompts
-- Configurable generation length
-- Temperature
+Example prompts:
 
-**Note:** StoryGPT is an educational language-model implementation, not a reproduction of OpenAI's GPT models.
+- `Once upon a time`
+- `One day, a little girl`
+- `A little boy went to`
+- `One sunny morning`
+
+The project uses temperature-based sampling to control the randomness of generated text.
+
+### Temperature Comparison
+
+| Temperature | Behaviour |
+|---|---|
+| 0.5 | More predictable and comparatively readable output |
+| 0.8 | More variation in generated text |
+| 1.0 | More random and creative output |
+
+In the experiments, temperature 0.5 produced the most readable results among the tested settings.
+
+## Checkpoint Saving and Loading
+
+After training, the model is saved in:
+
+`StoryGPT_Final_Checkpoint.pth`
+
+The checkpoint contains:
+
+- Model weights (`model_state_dict`)
+- Optimizer state (`optimizer_state_dict`)
+- Vocabulary size
+- Character vocabulary
+- Character-to-index mapping (`stoi`)
+- Index-to-character mapping (`itos`)
+- Model configuration
+- Final training loss
+- Final validation loss
+
+The notebook also includes code to reload the saved checkpoint.
+
+This allows the trained model to be restored in a new Google Colab session without repeating all 3,000 training iterations.
+
+To restore the model:
+
+1. Run the cells that define the tokenizer and model architecture.
+2. Create the model and optimizer.
+3. Upload `StoryGPT_Final_Checkpoint.pth`.
+4. Execute the checkpoint-loading cell.
+5. Run the story-generation cells.
+
+## Technologies Used
+
+- Python
+- PyTorch
+- Hugging Face Datasets
+- NumPy
+- Matplotlib
+- Google Colab
+- CUDA
+- Git and GitHub
+
+## How to Run
+
+### Using Google Colab
+
+1. Open the StoryGPT notebook in Google Colab.
+2. Select a GPU runtime for faster training.
+3. Run the notebook cells in sequence.
+4. The notebook downloads and prepares the TinyStories dataset.
+5. The model is created and trained.
+6. The final checkpoint is saved automatically.
+7. Run the generation cells to generate stories using different prompts and temperatures.
+
+## Project Structure
+
+```text
+StoryGPT/
+│
+├── StoryGPT.ipynb
+├── StoryGPT_Final_Checkpoint.pth
+├── README.md
+└── requirements.txt
+```
+
+## Limitations
+
+- Uses character-level tokenization instead of subword tokenization.
+- Has a relatively small model architecture.
+- Trained on only a subset of the TinyStories dataset.
+- Generated text may contain grammatical errors and spelling mistakes.
+- May produce repeated phrases or incomplete sentences.
+- Does not always maintain logical consistency throughout a story.
+- Does not use external knowledge or pretrained language model weights.
+
+## Future Improvements
+
+- Train on a larger dataset.
+- Increase the number of Transformer layers and embedding dimensions.
+- Experiment with subword tokenization.
+- Add a dedicated end-of-story token.
+- Experiment with different text-generation sampling strategies.
+- Evaluate generated stories using suitable language-generation metrics.
+
+---
+
+This project was developed to explore and understand the fundamentals of GPT-style language models and Transformer-based text generation by implementing a small language model from scratch.
+
+
+

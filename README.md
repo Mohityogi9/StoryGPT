@@ -1,12 +1,12 @@
 # StoryGPT – AI Story Generator
 
-StoryGPT is a character-level language model built using a decoder-only Transformer architecture. It learns patterns from Shakespeare's text and generates new text one character at a time.
+StoryGPT is a character-level language model built using a decoder-only Transformer architecture. It learns patterns from simple English stories in the TinyStories dataset and generates new story-like text one character at a time.
 
 The model is implemented and trained completely from scratch using PyTorch, without pretrained model weights or external AI APIs.
 
 ## Project Overview
 
-The objective of this project is to understand and implement the fundamental concepts behind GPT-style language models, including tokenization, embeddings, self-attention, Transformer blocks, model training and text generation.
+The objective of this project is to understand and implement the fundamental concepts behind GPT-style language models, including tokenization, embeddings, self-attention, Transformer blocks, model training, evaluation and text generation.
 
 ## Key Features
 
@@ -24,16 +24,19 @@ The objective of this project is to understand and implement the fundamental con
 
 ## Dataset
 
-**Dataset:** Tiny Shakespeare
+**Dataset:** TinyStories
 
-The model is trained on a text corpus containing approximately 1.1 million characters from Shakespeare's works.
+The model is trained on a subset of TinyStories, a dataset containing short stories written in simple English. It is designed to help language models learn basic language patterns and story structures.
 
-Dataset source:
-https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt
+Dataset source:  
+https://huggingface.co/datasets/roneneldan/TinyStories
 
 Dataset split:
-- Training data: 90%
-- Validation data: 10%
+- Training data: 20,000 stories
+- Validation data: 2,000 stories
+- Total: 22,000 stories
+
+The selected stories are combined into text sequences and processed using character-level tokenization.
 
 ## Model Architecture
 
@@ -41,13 +44,14 @@ Dataset split:
 |---|---:|
 | Model type | Decoder-only Transformer |
 | Tokenization | Character-level |
-| Vocabulary size | 65 |
+| Vocabulary size | 98 |
 | Embedding dimension | 128 |
 | Attention heads | 4 |
 | Transformer blocks | 4 |
 | Context length | 128 |
+| Batch size | 32 |
 | Dropout | 0.1 |
-| Trainable parameters | 758,849 |
+| Trainable parameters | 767,330 |
 | Optimizer | AdamW |
 | Learning rate | 0.0003 |
 | Training iterations | 3,000 |
@@ -73,81 +77,21 @@ Final recorded evaluation:
 
 | Metric | Result |
 |---|---:|
-| Initial training loss | 4.1710 |
-| Final training loss | 1.4258 |
-| Final validation loss | 1.6277 |
+| Final training loss | 1.1331 |
+| Final validation loss | 1.1413 |
 | Training iterations | 3,000 |
+| Training time | Approximately 83.4 seconds |
+| Training hardware | NVIDIA T4 GPU |
 
-The decreasing training and validation losses indicate that the model learned character and language patterns from the training corpus.
+The decreasing training and validation losses indicate that the model learned character and language patterns from the TinyStories dataset. The small difference between the two losses suggests similar performance on the training and validation data.
 
 ## Text Generation
 
-StoryGPT generates text by predicting one character at a time.
+StoryGPT generates text by predicting one character at a time based on the preceding characters.
 
 It supports:
 - User-provided text prompts
 - Configurable generation length
-- Temperature-based sampling
-
-Example prompt:
-
-`Once upon a time`
-
-The generated text follows patterns learned from Shakespeare's writing. Since this is a relatively small character-level model, generated text may contain grammatical errors, repetitions and incomplete sentences.
-
-## Technologies Used
-
-- Python
-- PyTorch
-- NumPy
-- Matplotlib
-- Google Colab
-- Git and GitHub
-
-## How to Run
-
-1. Clone or download this repository.
-2. Open `StoryGPT.ipynb` in Google Colab.
-3. Select a GPU runtime if available.
-4. Run the notebook cells in order.
-5. The notebook downloads the dataset and prepares the tokenizer.
-6. Build and train the Transformer model.
-7. Generate text using custom prompts.
-
-The saved checkpoint can also be loaded to reuse the trained model without repeating training.
-
-## Project Structure
-
-```text
-StoryGPT/
-│
-├── StoryGPT.ipynb
-├── storygpt_checkpoint.pth
-├── generated_story.txt
-├── training_loss.png
-├── README.md
-└── requirements.txt
-```
-## Limitations
-
-- Character-level rather than word-level or subword tokenization.
-- Relatively small model size.
-- Training corpus is limited to Shakespeare's text.
-- Generated text is not guaranteed to be grammatically correct or logically coherent.
-- The model does not have external knowledge or real-world understanding.
-
-## Future Improvements
-
-- Experiment with larger Transformer architectures.
-- Train for additional iterations and compare validation performance.
-- Explore subword tokenization.
-- Experiment with larger and more diverse text datasets.
-- Improve text-generation quality and sampling strategies.
-
-## Author
-
-Developed as a hands-on deep learning project to understand and implement a GPT-style language model from scratch.
-
----
+- Temperature
 
 **Note:** StoryGPT is an educational language-model implementation, not a reproduction of OpenAI's GPT models.
